@@ -1,0 +1,10 @@
+uvicorn==0.22.0
+pydantic==1.10.26
+openai==2.44.0
+python-dotenv==1.2.2
+numpy
+beautifulsoup4==4.14.3
+simhash==2.1.2
+faiss-cpu==1.14.3
+requests==2.34.2
+jieba==0.42.1
