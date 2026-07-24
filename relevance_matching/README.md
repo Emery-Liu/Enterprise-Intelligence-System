@@ -59,10 +59,9 @@ Example:
 
 ## What I Learned
 
-During the development of this module, I learned that enterprise relevance cannot be reliably determined through keyword matching alone.
+- Learned that enterprise relevance assessment requires semantic understanding beyond simple keyword matching.
 
-Although the implementation is intentionally lightweight, designing clear prompts and enforcing structured outputs significantly improved the consistency and reliability of LLM decisions.
-
+- Learned that clear prompt design and structured output constraints can significantly improve the consistency and reliability of LLM-based decisions.
 ---
 
 ## Future Improvements
@@ -74,8 +73,26 @@ Potential future improvements include:
 
 ---
 
+## docker
+
+```bash
+cd enterprise-intelligence-system
+
+docker build \
+-f relevance_matching/Dockerfile \
+-t relevance_matching .
+
+docker run --rm \
+  --name relevance_matching \
+  --env-file .env \
+  -p 1000:1000 \
+  relevance_matching
+```
+
+---
+
 ## Test Run
 
 ```bash
-uvicorn relevance_matching.src.main:app --host 0.0.0.0 --port 100
+uvicorn relevance_matching.src.main:app --host 0.0.0.0 --port 1000
 ```

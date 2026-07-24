@@ -85,22 +85,39 @@ Example:
 
 ## What I Learned
 
-Building this module made clear that hallucination in structured classification tasks is best prevented by construction rather than by correction. Instead of letting the LLM choose freely from the full taxonomy and then validating the result, restricting the model's choices at each step to only the real children of the current node made incorrect outputs structurally impossible in most cases, with tree-based validation serving only as a final safety net rather than the primary defense.
+- Learned to reduce LLM hallucinations through constrained generation by limiting classification choices to valid taxonomy nodes.
 
-I also learned to reason carefully about which parts of an asynchronous pipeline actually need to be asynchronous. Only operations with genuine network I/O (LLM calls, embedding calls) benefit from `async/await`
+- Learned how RAG improves LLM-based classification and built a FAISS-based retrieval system to efficiently search taxonomy candidates.
 
-Finally, working through the deployment constraints of this module — balancing dependency size, offline build environments, and version-specific package indexes — taught me that infrastructure limitations sometimes call for reconsidering an architectural decision (in this case, moving from a locally hosted embedding model to an internally provided embedding API) rather than repeatedly working around the same constraint.
+- Learned practical asynchronous pipeline design by applying `async/await` only to external API calls such as LLM and embedding requests.
+
+- Learned to make architecture decisions under deployment constraints by integrating an internal embedding API instead of hosting large models locally.
+
 ---
-
-## Future Improvements
-
-Potential future improvements include:
 
 ## Future Improvements
 
 - Improve output stability by introducing path reranking system
 - Further optimize retrieval quality by refining enterprise profile generation and candidate retrieval strategies.
 - Explore more reliable structured output mechanisms to reduce failures caused by malformed LLM-generated JSON.
+
+---
+
+## docker
+
+```bash
+cd enterprise-intelligence-system
+
+docker build \
+-f taxonomy_classification/Dockerfile \
+-t taxonomy_classification .
+
+docker run --rm \
+  --name taxonomy_classification \
+  --env-file .env \
+  -p 10:10 \
+  taxonomy_classification
+```
 
 ---
 

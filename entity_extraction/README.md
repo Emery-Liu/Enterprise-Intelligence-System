@@ -65,9 +65,9 @@ If no valid enterprise entity is detected, [] is returned.
 
 ## What I Learned
 
-During development, I found that general-purpose Named Entity Recognition (NER) models alone were insufficient for this task. So I chose to use rule-based pattern matching together with LLM-assisted validation to complete this unit.
+- Learned that general-purpose NER models are insufficient for domain-specific entity extraction. Combined rule-based pattern matching with LLM-based validation to improve extraction accuracy.
 
-Building an enterprise entity extraction pipeline suitable for production environments requires not only identifying organization names but also verifying entity quality, filtering out ambiguous mentions, handling noisy public information, and producing structured output that downstream algorithms can reliably use.
+- Learned that production-ready entity extraction requires more than name recognition, including entity quality validation, ambiguity filtering, noise handling, and structured output generation.
 
 ---
 
@@ -81,14 +81,31 @@ Building an enterprise entity extraction pipeline suitable for production enviro
 
 ## Future Improvements
 
-Potential future improvements include:
-
 * Support multilingual enterprise extraction.
 * Design a confidence scoring mechanism for extracted entities
 * Incorporate domain-specific knowledge bases for enterprise validation.
 
+---
 
-## Test Run
+## docker
+
+```bash
+cd enterprise-intelligence-system
+
+docker build \
+-f entity_extraction/Dockerfile \
+-t entity-extraction .
+
+docker run --rm \
+  --name entity-extraction \
+  --env-file .env \
+  -p 100:100 \
+  entity-extraction
+```
+
+
+## Local Test Run
+
 ```bash
 uvicorn entity_extraction.src.main:app --host 0.0.0.0 --port 100
 ```
