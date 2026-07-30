@@ -17,7 +17,7 @@ class IndustryTree:
     def __init__(self, taxonomy_path: str):
         self.taxonomy_path = taxonomy_path
         self.tree: Dict = self._load(taxonomy_path)
-        self.path_index: Dict[tuple[str, ...]] = {}
+        self.path_index: Dict[tuple[str, ...], Dict] = {}
         self._build_index(self.tree, [])                           
 
     # -------------------------------------------------------------------
@@ -28,8 +28,34 @@ class IndustryTree:
             return json.load(f) # convert to dict
 
     def _build_index(self, node: Dict, current_path: List[str]) -> None:
+        if not isinstance(node, dict):
+            raise TypeError(
+                f"Taxonomy node must be a dict, got {type(node).__name__}"
+            )
+
         for name, children in node.items():
-            self._build_index(children, current_path + [name])
+            if not isinstance(name, str) or not name.strip():
+                raise ValueError(
+                    f"Taxonomy node name must be a non-empty string, got {name!r}"
+                )
+
+            if not isinstance(children, dict):
+                raise TypeError(
+                    f"Children of taxonomy node {name!r} must be a dict, "
+                    f"got {type(children).__name__}"
+                )
+
+            path = current_path + [name]
+            path_key = tuple(path)
+
+            if path_key in self.path_index:
+                raise ValueError(
+                    f"Duplicate taxonomy path detected: {' > '.join(path)}"
+                )
+
+            self.path_index[path_key] = children
+
+            self._build_index(children, path)
     
 
     # -------------------------------------------------------------------
@@ -37,20 +63,40 @@ class IndustryTree:
     # -------------------------------------------------------------------
 
     def get_children(self, path: List[str]) -> List[str]:
-        """Returns a list of the names of a node's direct child nodes. An empty list indicates a leaf node"""
-        node = self.path_index.get(tuple(path)) # tuple(path) is key，node as its return
+        """
+        Return the direct child names of a valid taxonomy node.
 
-        if node is None:
-            return []
+        An empty list means the path is a valid leaf node.
+        An invalid path raises ValueError instead of being treated as a leaf.
+        """
+        path_key = tuple(path)
+
+        if path_key not in self.path_index:
+            raise ValueError(
+                f"Invalid taxonomy path: {' > '.join(path)}"
+            )
+
+        node = self.path_index[path_key]
         return list(node.keys())
 
     def is_valid_path(self, path: List[str]) -> bool:
-        """Determine whether a given path can be fully matched in the tree"""
+        """Determine whether a non-empty path can be fully matched in the tree."""
+        if not path:
+            return False
+
         return tuple(path) in self.path_index 
 
     def is_leaf(self, path: List[str]) -> bool:
-        """Determine whether a given node is leaf"""
-        return len(self.get_children(path)) == 0
+        """
+        Determine whether a valid taxonomy node is a leaf node.
+        """
+        if not self.is_valid_path(path):
+            raise ValueError(
+                f"Cannot determine leaf status for invalid path: "
+                f"{' > '.join(path)}"
+            )
+
+        return len(self.path_index[tuple(path)]) == 0
 
     def get_all_leaves(self) -> List[List[str]]:
         """DFS collects the complete paths of all leaf nodes for use by `tree_index.py` in building the embedding index."""

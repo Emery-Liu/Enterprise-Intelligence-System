@@ -124,5 +124,5 @@ docker run --rm \
 ## Test Run
 
 ```bash
-uvicorn main:app --host 0.0.0.0 --port 10
+uvicorn taxonomy_classification.src.main:app --host 0.0.0.0 --port 10
 ```
