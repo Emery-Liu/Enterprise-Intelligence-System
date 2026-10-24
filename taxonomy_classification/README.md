@@ -18,7 +18,7 @@ This module addresses both problems by narrowing the search space with vector re
 
 ## Input
 
-**Notice**: Current algorithm is designed for Chinese Market, therefore current IO examples are presented in Chinese.
+**Notice**: Current algorithm is designed for Chinese Market, therefore current IO examples are presented in Chinese. English input and return will be added later
 
 ```json
 {
