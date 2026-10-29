@@ -17,3 +17,7 @@ venv/
 # pytest / cache
 .pytest_cache/
 .mypy_cache/
+
+taxonomy_classification/src/vector_index/leaf_index.faiss
+taxonomy_classification/src/vector_index/leaf_path.json
+
